@@ -1,7 +1,9 @@
 # SourceTracer
-An efficient tool for inferring decomposition and directionality of microbial community.
-This is a source code for SourceTracer and data simulation in "TSourceTracer: An efficient tool for inferring
-decomposition and directionality of microbial community" paper.
+Microbiomes play crucial roles in human health, disease development, and global ecosystem functioning. Understanding the origins, movements, and compositions of microbial communities is essential for unraveling the principles governing microbial ecology. Microbial source tracking (MST) approaches have emerged as valuable tools for quantifying the proportions of different microbial sources within target communities, enabling researchers to track transmissions between hosts and environments, identify similarities between microbiome samples, and determine sources of contamination in various settings. Current MST methods like SourceTracker and FEAST have advanced the field by employing Bayesian and expectation-maximization approaches, respectively, but are limited by computational inefficiency with high-dimensional data and inability to infer directionality in source-sink relationships.
+
+This study presents a novel computational framework for microbial source tracking called SourceTracer. SourceTracer infers the relative contributions of source environments to sink microbiomes while also determining directionality when source-sink relationships are not predefined. Through extensive simulation studies with varying numbers of sources and complexity, SourceTracer demonstrates superior performance in both accuracy and computational efficiency compared to FEAST and SourceTracker, maintaining consistent execution times even as the number of source environments increases. Furthermore, the proposed method achieved over 90\% accuracy in directionality inference across all tested scenarios, even when multiple major sources are present, broadening its applicability in practical microbiome research and environmental monitoring. 
+
+This is a source code for SourceTracer and data simulation in **"SourceTracer: An efficient tool for inferring decomposition and directionality of microbial community"** paper.
 
 ## Requirements
 * R (>= 4.1.2)
