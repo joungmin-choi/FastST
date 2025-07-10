@@ -38,6 +38,7 @@ for (i in 1 : nk){
             mae.unobserved.vec[kk] = abs(alpha.est.vec[1] - res$alpha.vec[1] * mean(res$gamma.mat[1, ]))
             mae.major.vec[kk] = mean(abs(alpha.est.vec[2 : 3] - res$alpha.vec[2 : 3]))
           }
+          kk = kk + 1
         }
       })
       amae1.observed.mat[i, j] = mean(mae.observed.vec)
