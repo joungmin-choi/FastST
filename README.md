@@ -25,7 +25,7 @@ chmod +x ./Code/FastST
 ./Code/FastST userdata.txt
 ```
 
-* After running FastST, a `Result` directory will be created in the current working directory, containing the output file `./Result /results.txt`. In this file, the first column represents the estimated proportions computed by FastST, and the second column shows the standard errors. The first row corresponds to the unknown source. 
+* After running FastST, a `Result` directory will be created in the current working directory, containing the output file `./Result/results.txt`. In this file, the first column represents the estimated proportions computed by FastST, and the second column shows the standard errors. The first row corresponds to the unknown source. 
 
 * Again, we highly recommend users to read **README.docx** before running.
 * `example_comparison_tools` directory contains an example of our running code for the case of K = 10 in Scenario 1 (fully simulated microbiome data), demonstrating how we executed the comparison tools.
