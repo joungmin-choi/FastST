@@ -1,0 +1,88 @@
+#!/usr/bin/env Rscript
+
+suppressMessages(suppressWarnings(library(optparse)))
+suppressMessages(suppressWarnings(library(npreg)))
+
+setwd("./") # make sure the FastST folder is working directory
+source("./Code/funST.R")
+
+res_dirname <- "./Result"
+if (!dir.exists(res_dirname)){
+ dir.create(res_dirname)
+}
+
+# Define command line options
+option_list <- list(
+  make_option(c("-i", "--input"), 
+              type = "character", 
+              default = "userdata.txt",
+              help = "Input file name [default: %default]",
+              metavar = "filename"),
+  make_option(c("-o", "--output"), 
+              type = "character", 
+              default = "results.txt",
+              help = "Output file name [default: %default]",
+              metavar = "filename"),
+  make_option(c("-v", "--verbose"), 
+              action = "store_true", 
+              default = F,
+              help = "Print extra output [default: %default]"))
+
+# Create parser
+parser <- OptionParser(option_list=option_list, 
+                       usage = "%prog [options] input_file",
+                       description = "\nFastST: A fast source tracking tool.\nInput should be a tab-delimited text file.")
+
+# Parse arguments
+args <- parse_args(parser, positional_arguments = T)
+opts <- args$options
+
+# Handle positional arguments (for backward compatibility with FastST userdata.txt style)
+if (length(args$args) > 0)
+{
+  opts$input <- args$args[1]
+}
+
+# Check if input file exists
+if (!file.exists(opts$input))
+{
+  stop("Input file not found: ", opts$input)
+}
+
+# Print some information if verbose
+if (opts$verbose) {
+  cat("FastST analysis starting...\n")
+  cat("Input file:", opts$input, "\n")
+  cat("Output will be saved to:", opts$output, "\n")
+}
+
+# 
+res <- as.matrix(read.table(opts$input, row.names = NULL, header = T))
+x.vec <- res[, 2]
+yobs.mat <- t(res[, -(1 : 2)])
+
+cat("Estimating source proportions...\n")
+
+runt <- system.time(suppressWarnings({estres <- glsest(x.vec, yobs.mat)}))
+alpha.est.vec <- estres[[1]]
+alpha.est.vec <- alpha.est.vec / sum(alpha.est.vec)
+alpha.se.vec <- estres[[2]]
+prop.mat <- cbind(alpha.est.vec, alpha.se.vec)
+cat("Source proportion estimation result:\n")
+print(prop.mat)
+write.table(prop.mat, file = paste0("./Result/", opts$output), sep = "\t", row.names = F, col.names = F)
+# cat(paste0("\nResult saved. File name: ./Result/", resfile), "\n")
+cat("Elapsed time:", runt[3], "seconds \n")
+
+# Write output
+# tryCatch(
+#   {
+#     write.table(results, file = opts$output, sep = "\t", quote = FALSE, row.names = FALSE)
+#     if (opts$verbose) {
+#       cat("Analysis completed successfully.\n")
+#     }
+#   },
+#   error = function(e) {
+#     stop("Error writing output file: ", e$message)
+#   }
+# )

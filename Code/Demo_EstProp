@@ -1,0 +1,42 @@
+#!/usr/bin/env Rscript
+
+suppressMessages(suppressWarnings(library(optparse)))
+suppressMessages(suppressWarnings(library(npreg)))
+
+setwd("./") # make sure the FastST folder is working directory
+source("./Code/funST.R")
+
+res_dirname <- "./Result"
+if (!dir.exists(res_dirname)){
+ dir.create(res_dirname)
+}
+
+# Define command-line options
+option_list <- list(
+  make_option(c("-F", "--filename"), type = "character", default = "demo.txt",
+              help = "File name of simulated data [default = %default]")
+)
+
+# Create parser object and parse arguments
+parser <- OptionParser(option_list = option_list)
+args <- parse_args(parser)
+filename <- strsplit(args$filename, ".txt")[[1]]
+resfile <- paste0(filename, "_result.txt")
+figfile <- paste0(filename, ".jpg")
+
+# Read data
+res <- as.matrix(read.table(paste0("./Result/", args$filename), row.names = NULL))
+x.vec <- res[, 1]
+yobs.mat <- t(res[, -1])
+
+cat("Estimating source proportions...\n")
+
+runt <- system.time(estres <- glsest(x.vec, yobs.mat))
+alpha.est.vec <- estres[[1]]
+alpha.se.vec <- estres[[2]]
+prop.mat <- cbind(alpha.est.vec, alpha.se.vec)
+cat("Source proportion estimation result:\n")
+print(prop.mat)
+write.table(prop.mat, file = paste0("./Result/", resfile), sep = "\t", row.names = F, col.names = F)
+cat(paste0("\nResult saved. File name: ./Result/", resfile), "\n")
+cat("Elapsed time:", runt[3], "seconds \n")

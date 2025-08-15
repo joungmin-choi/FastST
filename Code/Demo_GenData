@@ -1,0 +1,62 @@
+#!/usr/bin/env Rscript
+
+suppressMessages(suppressWarnings(library(optparse)))
+suppressMessages(suppressWarnings(library(gtools)))
+
+setwd("./") # make sure the FastST folder is working directory
+source("./Code/funST.R")
+
+res_dirname <- "./Result"
+if (!dir.exists(res_dirname)){
+ dir.create(res_dirname)
+}
+
+# Define command-line options
+option_list <- list(
+  make_option(c("-N", "--ntaxa"), type = "integer", default = 500,
+              help = "Number of taxa"),
+  make_option(c("-K", "--nsource"), type = "integer", default = 10,
+              help = "Number of sources"),
+  make_option(c("-C", "--taxacount"), type = "integer", default = 1e5,
+              help = "Total taxa counts"),
+  make_option(c("-M", "--nmajorsource"), type = "integer", default = 5,
+              help = "Number of major sources"),
+  make_option(c("-P", "--pmajorsource"), type = "numeric", default = 0.9,
+              help = "Sum of major proportions"),
+  make_option(c("-L", "--lbpmajorsource"), type = "numeric", default = 0.1,
+              help = "Lower bound of major proportions"),
+  make_option(c("-O", "--filename"), type = "character", default = "demo_data.txt",
+              help = "File name of simulated data [default = %default]")
+)
+
+# Create parser object and parse arguments
+parser <- OptionParser(option_list = option_list)
+args <- parse_args(parser)
+
+cat("Simulating sink data using the following settings:\n")
+cat("-- Number of taxa:", N <- args$ntaxa, "\n")
+cat("-- Number of sources:", K <- args$nsource, "\n")
+cat("-- Total taxa counts:", C <- args$taxacount, "\n")
+cat(paste0("-- Number of major sources: ", nmajor <- args$nmajorsource, "; From #", 2, " to #", nmajor + 1, "\n"))
+cat("-- Sum of major proportions:", pmajor <- args$pmajorsource, "\n")
+cat("-- Lower bound of major proportions:", lb.amajor <- args$lbpmajorsource, "\n\n")
+datafile <- args$filename
+commandline1 <- paste0("./Code/Demo_GenData -N ", N, " -K ", K, " -C ", C)
+commandline2 <- paste0(" -M ", nmajor, " -P ", pmajor, " -L ", lb.amajor, " -O '", datafile, "'")
+cat("Command:", commandline1, "\n")
+cat("        ", commandline2, "\n")
+
+# Generate sink data
+set.seed(123)
+res <- gendata(N, K, C, nmajor = nmajor, pmajor = pmajor, lb.amajor = lb.amajor)
+x.vec <- res$x.vec
+beta.vec <- res$beta.vec
+gamma.mat <- res$gamma.mat
+alpha.vec <- res$alpha.vec
+y.mat <- res$y.mat
+yobs.mat <- y.mat[-1, ]
+
+# Save sink data, source data, and source proportions into txt file
+data.mat <- cbind(x.vec, t(yobs.mat)) # 1st: sink, rest: observed sources
+write.table(data.mat, file = paste0("./Result/", datafile), sep = "\t", row.names = F, col.names = F)
+cat(paste0("Data simulated. File name: ./Result/", datafile), "\n\n")
