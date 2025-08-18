@@ -2,13 +2,8 @@
 suppressMessages(suppressWarnings(library(gtools)))
 suppressMessages(suppressWarnings(library(npreg)))
 
-setwd("./") # make sure the FastST folder is working directory
+setwd("C:/Users/Xiaowei/Documents/Work/FastST") # make sure the FastST folder is working directory
 source("./Code/funST.R")
-
-res_dirname <- "./Result"
-if (!dir.exists(res_dirname)){
- dir.create(res_dirname)
-}
 
 gensemidata <- function(file, K, nmajor = 2, pmajor = 0.9, lb.amajor = 0.1)
 {
@@ -80,7 +75,7 @@ for (i in 1 : nk)
           alpha.vec <- res$alpha.vec
           y.mat <- res$y.mat
           yobs.mat <- y.mat[-1, ]
-          estres <- glsest(x.vec, yobs.mat)
+          suppressWarnings({estres <- glsest(x.vec, yobs.mat)})
           alpha.est.vec <- estres[[1]]
           alpha.se.vec <- estres[[2]]
           if (sum(is.na(alpha.est.vec)) == 0)
